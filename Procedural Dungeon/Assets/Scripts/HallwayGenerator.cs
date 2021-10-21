@@ -13,6 +13,9 @@ public class HallwayGenerator : RandomWalkGenerator
     [Range(0.1f, 1.0f)]
     private float roomPercent = 0.8f;
 
+    [SerializeField]
+    private float empytTest = 0;
+
     protected override void RunProceduralGeneration()
     {
         HallwayGeneration();
@@ -21,16 +24,56 @@ public class HallwayGenerator : RandomWalkGenerator
     private void HallwayGeneration()
     {
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-        HashSet<Vector2Int> roomPosition = new HashSet<Vector2Int>();
+        HashSet<Vector2Int> potentialRoomPositions = new HashSet<Vector2Int>();
 
 
-        CreateHallway(floorPositions, roomPosition);
-        HashSet<Vector2Int> roomPositions = CreateRooms(roomPosition);
+        CreateHallway(floorPositions, potentialRoomPositions);
+        HashSet<Vector2Int> roomPositions = CreateRooms(potentialRoomPositions);
+
+        List<Vector2Int> deadEnds = SearchDeadEnds(floorPositions);
+
+        GenerateRoomsAtDeadEnd(deadEnds, roomPositions);
 
         floorPositions.UnionWith(roomPositions);
 
         tileMapGraphics.PaintFloorTiles(floorPositions);
         WallGenerator.CreateWalls(floorPositions, tileMapGraphics);
+    }
+
+    private void GenerateRoomsAtDeadEnd(List<Vector2Int> deadEnds, HashSet<Vector2Int> roomPositions)
+    {
+        foreach (var position in deadEnds)
+        {
+            if (roomPositions.Contains(position) == false)
+            {
+                var roomPosition = RunRandomWalk(randomWalkParameters, position);
+                roomPositions.UnionWith(roomPosition);
+            }
+        }
+    }
+
+    private List<Vector2Int> SearchDeadEnds(HashSet<Vector2Int> floorPositions)
+    {
+        List<Vector2Int> deadEnds = new List<Vector2Int>();
+        foreach (var position in floorPositions)
+        {
+            int neighboursCount = 0;
+
+            foreach (var direction in Direct2D.cardinalDirectionList)
+            {
+                if (floorPositions.Contains(position + direction))
+                {
+                    neighboursCount++;
+                }
+            }
+
+            if (neighboursCount == 1)
+            {
+                deadEnds.Add(position);
+                
+            }
+        }
+        return deadEnds;
     }
 
     private HashSet<Vector2Int> CreateRooms(HashSet<Vector2Int> roomPosition)
