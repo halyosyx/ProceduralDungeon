@@ -30,13 +30,6 @@ public class RoomFirstDungeonGenerator : RandomWalkGenerator
 
         floor = randomWalkRooms ? RandomlyCreateRooms(roomsList) : CreateSimpleRooms(roomsList);
 
-        //if (randomWalkRooms)
-        //{
-        //    floor = RandomlyCreateRooms(roomsList);
-        //}
-        //
-        //floor = CreateSimpleRooms(roomsList);
-
         List<Vector2Int> roomCenters = new List<Vector2Int>();
 
         foreach (var room in roomsList)
@@ -143,6 +136,9 @@ public class RoomFirstDungeonGenerator : RandomWalkGenerator
     }
 
     // Can add decorations with this function
+    // TODO: Add end room add start room
+
+
     private HashSet<Vector2Int> CreateSimpleRooms(List<BoundsInt> roomsList)
     {
         HashSet<Vector2Int> floor = new HashSet<Vector2Int>();
@@ -157,6 +153,7 @@ public class RoomFirstDungeonGenerator : RandomWalkGenerator
                 }
             }
         }
+
         return floor;
     }
 }

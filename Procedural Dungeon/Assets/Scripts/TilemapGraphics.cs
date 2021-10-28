@@ -21,6 +21,8 @@ public class TilemapGraphics : MonoBehaviour
         PaintSingleTile(wallTilemap, wallTop, position);
     }
 
+
+    // TODO: Paint different tiles
     private void PaintFloorTiles(IEnumerable<Vector2Int> positions, Tilemap tileMap, TileBase tile)
     {
         foreach (var position in positions)
